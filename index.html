@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Investor Platform · Prototypes</title>
+<style>
+  :root{--blue:#1153c4;--blue-dark:#0d3f97;--blue-050:#eef4ff;--blue-100:#dbe7ff;
+    --ink:#141c2b;--muted:#5b6678;--line:#e4e9f2;--bg:#f5f8fd;--white:#fff;
+    --shadow:0 1px 2px rgba(20,28,43,.06),0 8px 24px rgba(20,28,43,.06);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 22px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:8px}
+  .logo .m{width:30px;height:30px;border-radius:8px;background:var(--blue);display:grid;place-items:center}
+  .logo .m svg{width:17px;height:17px;fill:#fff}
+  .logo .c{color:var(--blue)}
+  h1{font-size:27px;letter-spacing:-.02em;margin:22px 0 6px}
+  .sub{color:var(--muted);margin:0 0 8px;font-size:16px}
+  .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-050);
+    border:1px solid var(--blue-100);padding:5px 12px;border-radius:999px;margin-bottom:26px}
+  .card{display:block;text-decoration:none;color:inherit;background:var(--white);border:1px solid var(--line);
+    border-radius:16px;box-shadow:var(--shadow);padding:24px;margin-bottom:18px;transition:.15s}
+  .card:hover{border-color:var(--blue-100);transform:translateY(-2px)}
+  .card .k{font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+  .card h2{font-size:19px;margin:6px 0 8px;letter-spacing:-.01em}
+  .card p{color:var(--muted);margin:0 0 14px;font-size:15px}
+  .card .go{color:var(--blue);font-weight:700;font-size:14px}
+  .foot{color:var(--muted);font-size:13px;margin-top:24px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <span class="m"><svg viewBox="0 0 24 24"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg></span>
+    <span><span class="c">Clever</span> Offers</span>
+  </div>
+
+  <span class="tag">Interactive prototypes · Investor Platform</span>
+  <h1>Clever Investor Platform — clickable prototypes</h1>
+  <p class="sub">Two views of the "Better" build: how an agent packages a deal, and what a matched investor receives. Both are directional prototypes, not production UI.</p>
+
+  <a class="card" href="./better-v1-package-builder.html">
+    <div class="k">Better v1 · Agent view</div>
+    <h2>Deal Package Builder</h2>
+    <p>The agent enters an address (auto-filling specs + valuation), adds condition, photos, and the seller's terms, then matches the home to Clever's vetted investor network.</p>
+    <span class="go">Open prototype →</span>
+  </a>
+
+  <a class="card" href="./better-v2-investor-experience.html">
+    <div class="k">Better v2 · Investor view</div>
+    <h2>Investor Deal Blast &amp; Offer</h2>
+    <p>An investor receives the automated deal blast in their inbox, opens the deal on Clever's platform, and submits an offer — or passes with a reason. The platform runs the outreach; the agent never chases buyers.</p>
+    <span class="go">Open prototype →</span>
+  </a>
+
+  <div class="foot">Prepared for the Clever Real Estate Senior PM trial · Libby McCoy</div>
+</div>
+</body>
+</html>

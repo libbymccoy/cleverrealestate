@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Offers · Investor Deal (v2)</title>
+<style>
+  :root{
+    --blue:#1153c4; --blue-dark:#0d3f97; --blue-050:#eef4ff; --blue-100:#dbe7ff;
+    --ink:#141c2b; --muted:#5b6678; --line:#e4e9f2; --bg:#f5f8fd; --white:#fff;
+    --green:#0f8a5f; --green-050:#e7f6ef; --amber:#b7791f; --amber-050:#fdf6e7; --red:#c0392b;
+    --radius:14px; --shadow:0 1px 2px rgba(20,28,43,.06),0 8px 24px rgba(20,28,43,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.45}
+
+  header{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .bar{max-width:900px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+  .logo .mark{width:26px;height:26px;border-radius:7px;background:var(--blue);display:grid;place-items:center}
+  .logo .mark svg{width:15px;height:15px;fill:#fff}
+  .logo .c{color:var(--blue)} .logo .o{color:var(--ink)}
+  .who{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.3}
+  .who b{color:var(--ink);font-size:13px}
+
+  .wrap{max-width:900px;margin:0 auto;padding:26px 22px 80px}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .hidden{display:none !important}
+  .btn{font:inherit;font-weight:700;font-size:14px;border:none;border-radius:10px;padding:11px 18px;cursor:pointer;transition:.15s}
+  .btn.primary{background:var(--blue);color:#fff}.btn.primary:hover{background:var(--blue-dark)}
+  .btn.ghost{background:var(--white);color:var(--muted);border:1px solid var(--line)}.btn.ghost:hover{background:var(--bg)}
+  .btn.block{width:100%}
+  .muted{color:var(--muted);font-size:13px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-size:12px;font-weight:600;background:var(--blue-050);color:var(--blue-dark);border:1px solid var(--blue-100);padding:4px 10px;border-radius:999px}
+  .chip.ok::before{content:"✓ ";}
+  .thumb{border-radius:9px;background:linear-gradient(135deg,#c9d8f5,#9fb8ea);display:grid;place-items:center;
+    color:#3a5c9a;font-size:11px;font-weight:700;border:1px solid var(--blue-100);height:84px}
+
+  /* urgency */
+  .urgency{display:flex;align-items:center;gap:16px;background:var(--amber-050);border:1px solid #f2e3bf;
+    color:#7a5b12;border-radius:11px;padding:11px 15px;font-size:13px;font-weight:600;flex-wrap:wrap}
+  .urgency .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block;margin-right:6px;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .page-loader{position:fixed;inset:0;background:var(--bg);z-index:50;display:grid;place-items:center;text-align:center}
+  .spinner-lg{width:44px;height:44px;border:4px solid var(--blue-100);border-top-color:var(--blue);border-radius:50%;display:inline-block;animation:spin .8s linear infinite}
+  .page-loader p{margin:16px 0 0;color:var(--muted);font-size:14px}
+  .page-loader .brandmini{display:flex;align-items:center;gap:7px;justify-content:center;margin-bottom:20px;font-weight:800;font-size:16px;letter-spacing:-.02em}
+  .page-loader .brandmini .m{width:22px;height:22px;border-radius:6px;background:var(--blue);display:grid;place-items:center}
+  .page-loader .brandmini .m svg{width:13px;height:13px;fill:#fff}
+  .count{font-variant-numeric:tabular-nums;color:var(--red)}
+
+  /* ALERT / email */
+  .email{overflow:hidden}
+  .email .meta{padding:16px 20px;border-bottom:1px solid var(--line)}
+  .email .from{display:flex;align-items:center;gap:10px;font-size:13px}
+  .email .avatar{width:34px;height:34px;border-radius:8px;background:var(--blue);display:grid;place-items:center}
+  .email .avatar svg{width:18px;height:18px;fill:#fff}
+  .email .from b{font-size:14px}.email .from .addr{color:var(--muted)}
+  .email .subj{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:14px 0 0}
+  .email .body{padding:20px}
+  .teaser{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .teaser .photo{height:150px;background:linear-gradient(135deg,#c9d8f5,#9fb8ea);display:grid;place-items:center;color:#3a5c9a;font-weight:700}
+  .teaser .body2{padding:16px}
+  .kv{display:flex;gap:22px;flex-wrap:wrap;margin:10px 0}
+  .kv .k{font-size:12px;color:var(--muted)} .kv .v{font-size:16px;font-weight:800}
+  .actions{display:flex;gap:10px;margin-top:16px;align-items:center}
+
+  /* Gmail chrome */
+  .gmailbar{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--line);
+    border-radius:12px;padding:9px 14px;margin-bottom:14px}
+  .gm-logo{display:flex;align-items:center;gap:5px;font-size:18px;color:#5f6368;font-weight:500}
+  .gm-logo svg{width:24px;height:24px}
+  .gm-search{flex:1;background:#eaf0fb;border-radius:999px;padding:8px 14px;color:#5f6368;font-size:14px;display:flex;align-items:center;gap:8px}
+  .gm-you{width:30px;height:30px;border-radius:50%;background:#7e57c2;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .gmailmsg{padding:20px 22px}
+  .gm-subject{font-size:21px;font-weight:500;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .gm-label{font-size:11px;font-weight:600;color:#5f6368;background:#e8eaed;border-radius:5px;padding:2px 7px}
+  .gm-senderrow{display:flex;align-items:center;gap:12px;margin:16px 0 4px}
+  .gm-avatar{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;flex-shrink:0}
+  .gm-senderinfo{flex:1;font-size:13px;line-height:1.45}
+  .gm-star{cursor:pointer;color:#c0c6d0;font-size:20px;user-select:none}
+  .pstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px}
+  .ps{height:46px;border-radius:6px;background:linear-gradient(135deg,#c9d8f5,#9fb8ea);display:grid;place-items:center;
+    color:#3a5c9a;font-size:10px;font-weight:700;border:1px solid var(--blue-100)}
+  .ps.more{background:var(--ink);color:#fff}
+  .thumb.more{background:var(--ink);color:#fff;cursor:pointer;flex-direction:column;gap:2px;line-height:1.2}
+  /* Gmail two-pane */
+  .gmail-body{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--white);box-shadow:var(--shadow)}
+  .gmail-list{width:248px;border-right:1px solid var(--line);flex-shrink:0}
+  .gl-head{padding:12px 16px;font-weight:800;font-size:14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;color:var(--ink)}
+  .gl-head span{color:var(--muted);font-weight:600}
+  .gl-row{display:flex;gap:9px;align-items:center;padding:11px 13px;border-bottom:1px solid var(--line);cursor:pointer}
+  .gl-row.sel{background:#f2f6ff;box-shadow:inset 3px 0 0 var(--blue)}
+  .gl-dot{width:8px;height:8px;border-radius:50%;background:transparent;flex-shrink:0}
+  .gl-row.unread .gl-dot{background:var(--blue)}
+  .gl-txt{flex:1;min-width:0}
+  .gl-from{font-size:13px;color:var(--muted)}
+  .gl-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gl-row.unread .gl-from{font-weight:800;color:var(--ink)}
+  .gl-row.unread .gl-sub{font-weight:600;color:var(--ink)}
+  .gl-time{font-size:11px;color:var(--muted);flex-shrink:0}
+  .gmail-read{flex:1;padding:20px 22px;min-width:0}
+  @media(max-width:700px){.gmail-list{display:none}}
+
+  /* DEAL page */
+  .gallery{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:18px}
+  .gallery .big{grid-row:span 2;height:auto}
+  .dealhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .dealhead h1{font-size:23px;margin:0;letter-spacing:-.02em}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  @media(max-width:640px){.stats{grid-template-columns:1fr 1fr}.gallery{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat .l{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+  .stat .n{font-size:22px;font-weight:800;margin-top:3px}
+  .stat .n.blue{color:var(--blue)}
+  .sec{padding:20px 22px;border-top:1px solid var(--line)}
+  .sec h3{font-size:14px;margin:0 0 12px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px}
+  @media(max-width:640px){.row2{grid-template-columns:1fr}}
+  .li{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .li .k{color:var(--muted)}
+  .matchbar{background:var(--green-050);border:1px solid #cdeede;border-radius:11px;padding:13px 16px;margin-bottom:16px}
+  .matchbar b{color:var(--green)}
+  .stickybuy{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);z-index:15}
+  .stickybuy .inner{max-width:900px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:12px}
+  .stickybuy .price{font-size:13px;color:var(--muted)} .stickybuy .price b{color:var(--ink);font-size:16px}
+  .stickybuy .sp{margin-left:auto;display:flex;gap:10px}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(20,28,43,.45);z-index:40;display:none;align-items:center;justify-content:center;padding:20px}
+  .overlay.show{display:flex}
+  .modal{background:var(--white);border-radius:16px;max-width:460px;width:100%;box-shadow:var(--shadow);max-height:90vh;overflow:auto}
+  .modal .mh{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .modal .mh h3{margin:0;font-size:16px}.modal .mb{padding:20px 22px}.modal .mf{padding:16px 22px;border-top:1px solid var(--line)}
+  .x{cursor:pointer;color:var(--muted);font-size:20px;line-height:1;border:none;background:none}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+  .field label{font-size:12px;font-weight:600;color:var(--muted)}
+  input,select,textarea{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:100%}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-050)}
+  textarea{resize:vertical;min-height:60px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .radio{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:14px;cursor:pointer;margin-bottom:8px}
+  .radio input{width:auto}
+  .success{text-align:center;padding:10px 6px}
+  .success .check{width:56px;height:56px;border-radius:50%;background:var(--green-050);color:var(--green);
+    display:grid;place-items:center;font-size:28px;font-weight:800;margin:6px auto 14px;border:1px solid #cdeede}
+  .note{background:var(--amber-050);border:1px solid #f2e3bf;color:#7a5b12;border-radius:10px;padding:11px 13px;font-size:13px;margin-top:14px;text-align:left}
+</style>
+</head>
+<body>
+
+<header id="appHeader" class="hidden">
+  <div class="bar">
+    <div class="logo">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg></span>
+      <span><span class="c">Clever</span> <span class="o">Offers</span></span>
+    </div>
+    <div class="who">Investor Network<br><b>Acme Home Capital</b> · Fix &amp; Flip / Buy &amp; Hold</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ 1) ALERT (deal blast, shown in Gmail) ============ -->
+  <div id="alertView">
+    <p class="muted" style="margin:0 0 12px">Sent automatically by Clever's matching engine — this is what a matched investor receives.</p>
+
+    <div class="gmailbar">
+      <span class="gm-logo"><svg viewBox="0 0 24 24"><path fill="#EA4335" d="M2 6.5V18a1.5 1.5 0 0 0 1.5 1.5H6V10.2l6 4.3 6-4.3V19.5h2.5A1.5 1.5 0 0 0 22 18V6.5L12 13.3z"/></svg>Gmail</span>
+      <div class="gm-search"><svg viewBox="0 0 24 24" width="15" height="15" fill="#8a94a6"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg> Search mail</div>
+      <span class="gm-you">A</span>
+    </div>
+
+    <div class="gmail-body">
+      <div class="gmail-list">
+        <div class="gl-head">Inbox <span>4</span></div>
+        <div class="gl-row sel unread"><span class="gl-dot"></span><div class="gl-txt"><div class="gl-from">Clever Offers Network</div><div class="gl-sub">New deal matched to your buy box — 3BR in Springfield…</div></div><div class="gl-time">2:14 PM</div></div>
+        <div class="gl-row"><span class="gl-dot"></span><div class="gl-txt"><div class="gl-from">PropStream</div><div class="gl-sub">Your saved search: 3 new distressed listings</div></div><div class="gl-time">11:02 AM</div></div>
+        <div class="gl-row"><span class="gl-dot"></span><div class="gl-txt"><div class="gl-from">Sunrise Escrow &amp; Title</div><div class="gl-sub">Closing docs for 214 Oak St are ready</div></div><div class="gl-time">Thu</div></div>
+        <div class="gl-row"><span class="gl-dot"></span><div class="gl-txt"><div class="gl-from">BiggerPockets</div><div class="gl-sub">5 investors are discussing your market</div></div><div class="gl-time">Wed</div></div>
+      </div>
+      <div class="gmail-read">
+      <div class="gm-subject">New deal matched to your buy box — 3BR in Springfield, MO <span class="gm-label">Inbox</span></div>
+      <div class="gm-senderrow">
+        <span class="gm-avatar">C</span>
+        <div class="gm-senderinfo">
+          <div><b>Clever Offers Network</b> <span class="muted">&lt;deals@cleveroffers.com&gt;</span></div>
+          <div class="muted">to me · 2:14 PM (3 minutes ago)</div>
+        </div>
+        <span class="gm-star" onclick="var s=this.textContent.trim()==='★';this.textContent=s?'☆':'★';this.style.color=s?'':'#f4b400'">☆</span>
+      </div>
+      <div class="body">
+        <p style="margin:0 0 14px">Hi Acme Home Capital — a motivated seller just listed a home that fits what you buy. Vetted by Clever; the seller is working with their agent, and we're bringing you the deal directly.</p>
+        <div class="teaser">
+          <div class="photo">🏠 1428 Maple Ave · Springfield, MO</div>
+          <div class="pstrip">
+            <div class="ps">Kitchen</div><div class="ps">Bath</div><div class="ps">Roof</div><div class="ps more">+21 photos</div>
+          </div>
+          <div class="body2">
+            <div class="kv">
+              <div><div class="k">Seller asking</div><div class="v">$215,000</div></div>
+              <div><div class="k">Est. ARV</div><div class="v">$285,000</div></div>
+              <div><div class="k">Beds / Baths</div><div class="v">3 / 2</div></div>
+              <div><div class="k">Condition</div><div class="v" style="font-size:14px">Dated, cosmetic</div></div>
+            </div>
+            <div class="chips" style="margin-top:6px">
+              <span class="chip ok">Single-family</span>
+              <span class="chip ok">$215k · in your $150–300k</span>
+              <span class="chip ok">ZIP 65807</span>
+              <span class="chip ok">Fix &amp; Flip fit</span>
+            </div>
+          </div>
+        </div>
+        <div class="urgency" style="margin-top:14px">
+          <span><span class="dot"></span>9 investors invited</span>
+          <span>Offers close in <span class="count" id="count1">47:59:12</span></span>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="openDeal()">View deal &amp; make an offer →</button>
+          <button class="btn ghost" onclick="goToDeal(openPass)">Not for me — pass</button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 2) DEAL PAGE ============ -->
+  <div id="dealView" class="hidden">
+    <p class="muted" style="margin:0 0 12px;cursor:pointer" onclick="backToAlert()">← Back to alert</p>
+
+    <div class="matchbar">
+      <b>Matched to your buy box.</b> Single-family · $215k (your range $150–300k) · ZIP 65807 · Fix &amp; Flip. Vetted by Clever Offers · motivated seller.
+    </div>
+
+    <div class="urgency" style="margin-bottom:16px">
+      <span><span class="dot"></span>9 investors invited</span>
+      <span>Offers close in <span class="count" id="count2">47:59:12</span></span>
+      <span style="color:#7a5b12;font-weight:500">Offer amounts are private — best offer wins on price &amp; terms.</span>
+    </div>
+
+    <p class="muted" style="margin:0 0 8px">📷 24 photos · ▶ video walkthrough</p>
+    <div class="gallery">
+      <div class="thumb big" style="height:180px">Front exterior</div>
+      <div class="thumb">Kitchen</div>
+      <div class="thumb">Living room</div>
+      <div class="thumb">Water damage</div>
+      <div class="thumb more">+20 photos<span style="font-weight:500;font-size:10px">▶ video walkthrough</span></div>
+    </div>
+
+    <div class="dealhead">
+      <h1>1428 Maple Ave, Springfield, MO 65807</h1>
+    </div>
+    <p class="muted">Single-family · 3 bd / 2 ba · 1,420 sq ft · 0.19 ac · Built 1978 · Vacant</p>
+
+    <div class="stats">
+      <div class="stat"><div class="l">Seller asking</div><div class="n">$215k</div></div>
+      <div class="stat"><div class="l">As-is (AVM)</div><div class="n">$208k</div></div>
+      <div class="stat"><div class="l">After-repair (ARV)</div><div class="n blue">$285k</div></div>
+      <div class="stat"><div class="l">Est. rent</div><div class="n">$1,750<span style="font-size:13px;color:var(--muted)">/mo</span></div></div>
+    </div>
+
+    <div class="card">
+      <div class="sec" style="border-top:none">
+        <h3>Condition &amp; rehab</h3>
+        <div class="row2">
+          <div class="li"><span class="k">Overall</span><span>Dated — cosmetic work</span></div>
+          <div class="li"><span class="k">Occupancy</span><span>Vacant</span></div>
+          <div class="li"><span class="k">Roof age</span><span>14 yrs</span></div>
+          <div class="li"><span class="k">Est. rehab</span><span>~$45,000</span></div>
+        </div>
+        <p class="muted" style="margin:12px 0 0">Notes from agent: original kitchen &amp; baths, minor water staining in hall bath ceiling, HVAC ~2019. No known foundation issues.</p>
+      </div>
+      <div class="sec">
+        <h3>Seller terms &amp; timeline</h3>
+        <div class="row2">
+          <div class="li"><span class="k">Timeline</span><span>Fast — 2–4 weeks</span></div>
+          <div class="li"><span class="k">Open to</span><span>Cash · Novation</span></div>
+          <div class="li"><span class="k">Access</span><span>By appointment</span></div>
+          <div class="li"><span class="k">Docs</span><span>Title, prior inspection</span></div>
+        </div>
+      </div>
+      <div class="sec">
+        <h3>Comps</h3>
+        <p class="muted" style="margin:0">6 as-is comps ($198k–$221k) &amp; 4 renovated comps ($271k–$298k) within 0.8 mi. Full comp set attached.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- page load transition (email link → Clever web page) -->
+<div id="pageLoader" class="page-loader hidden">
+  <div>
+    <div class="brandmini"><span class="m"><svg viewBox="0 0 24 24"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg></span><span><span style="color:var(--blue)">Clever</span> Offers</span></div>
+    <span class="spinner-lg"></span>
+    <p>Opening deal…</p>
+  </div>
+</div>
+
+<!-- sticky buy bar (deal only) -->
+<div class="stickybuy hidden" id="stickybuy">
+  <div class="inner">
+    <span class="price">Seller asking <b>$215,000</b> · ARV $285k</span>
+    <div class="sp">
+      <button class="btn ghost" onclick="openPass()">Pass</button>
+      <button class="btn primary" onclick="openOffer()">Submit an offer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OFFER MODAL ============ -->
+<div class="overlay" id="offerOverlay">
+  <div class="modal">
+    <div id="offerForm">
+      <div class="mh"><h3>Submit your offer</h3><button class="x" onclick="closeModals()">✕</button></div>
+      <div class="mb">
+        <p style="margin:0 0 10px;font-weight:800;font-size:13px">Your details</p>
+        <div class="field"><label>Investor / company</label><input value="Acme Home Capital"></div>
+        <div class="two">
+          <div class="field"><label>Investor ID</label><input value="INV-3391"></div>
+          <div class="field"><label>Contact name</label><input placeholder="e.g. Priya Shah"></div>
+        </div>
+        <div class="field"><label>Contact email</label><input placeholder="e.g. priya@acmehomecap.com"></div>
+        <p style="margin:16px 0 10px;font-weight:800;font-size:13px">Your offer</p>
+        <div class="field"><label>Offer price</label><input placeholder="e.g. $198,000"></div>
+        <div class="two">
+          <div class="field"><label>Offer type</label><select><option>Cash</option><option>Novation</option></select></div>
+          <div class="field"><label>Earnest money</label><input placeholder="e.g. $5,000"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label>Close in</label><select><option>7 days</option><option selected>14 days</option><option>21 days</option><option>30 days</option></select></div>
+          <div class="field"><label>Inspection</label><select><option selected>As-is, no contingency</option><option>Inspection contingency</option></select></div>
+        </div>
+        <div class="field"><label>Proof of funds</label><input type="text" readonly value="✓ On file with Clever" style="background:#f8fafd;color:var(--green)"></div>
+        <div class="field"><label>Note to seller's agent (optional)</label><textarea placeholder="Flexible on close date, can waive appraisal…"></textarea></div>
+      </div>
+      <div class="mf"><button class="btn primary block" onclick="submitOffer()">Submit offer to Clever</button></div>
+    </div>
+    <div id="offerDone" class="hidden">
+      <div class="mb success">
+        <div class="check">✓</div>
+        <h3 style="margin:0 0 6px">Offer submitted</h3>
+        <p class="muted" style="margin:0">Clever will present your offer to the seller through their agent. We'll notify you if you're selected.</p>
+        <div class="note">Reminder: every seller rates their investor after close. Prompt, clean deals keep you in the network.</div>
+      </div>
+      <div class="mf"><button class="btn primary block" onclick="closeModals()">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PASS MODAL ============ -->
+<div class="overlay" id="passOverlay">
+  <div class="modal">
+    <div id="passForm">
+      <div class="mh"><h3>Pass on this deal</h3><button class="x" onclick="closeModals()">✕</button></div>
+      <div class="mb">
+        <p class="muted" style="margin:0 0 14px">Quick reason — this trains your matches so we send you better deals.</p>
+        <label class="radio"><input type="radio" name="reason"> Price / spread too tight</label>
+        <label class="radio"><input type="radio" name="reason"> Wrong area</label>
+        <label class="radio"><input type="radio" name="reason"> Condition / rehab too heavy</label>
+        <label class="radio"><input type="radio" name="reason"> Doesn't fit my buy box right now</label>
+        <label class="radio"><input type="radio" name="reason"> Other</label>
+      </div>
+      <div class="mf"><button class="btn primary block" onclick="submitPass()">Submit &amp; pass</button></div>
+    </div>
+    <div id="passDone" class="hidden">
+      <div class="mb success">
+        <div class="check" style="background:var(--blue-050);color:var(--blue);border-color:var(--blue-100)">↩</div>
+        <h3 style="margin:0 0 6px">Passed — thanks</h3>
+        <p class="muted" style="margin:0">We'll use this to send you better-matched deals. No action needed.</p>
+      </div>
+      <div class="mf"><button class="btn primary block" onclick="closeModals()">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function goToDeal(cb){
+    var ldr=document.getElementById('pageLoader');
+    ldr.classList.remove('hidden');
+    setTimeout(function(){
+      document.getElementById('alertView').classList.add('hidden');
+      document.getElementById('dealView').classList.remove('hidden');
+      document.getElementById('stickybuy').classList.remove('hidden');
+      document.getElementById('appHeader').classList.remove('hidden'); // now in the Clever platform
+      ldr.classList.add('hidden');
+      window.scrollTo(0,0);
+      if(typeof cb==='function') cb();
+    }, 850);
+  }
+  function openDeal(){ goToDeal(); }
+  function backToAlert(){
+    document.getElementById('dealView').classList.add('hidden');
+    document.getElementById('stickybuy').classList.add('hidden');
+    document.getElementById('appHeader').classList.add('hidden'); // back in Gmail
+    document.getElementById('alertView').classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+  function openOffer(){document.getElementById('offerForm').classList.remove('hidden');document.getElementById('offerDone').classList.add('hidden');document.getElementById('offerOverlay').classList.add('show');}
+  function submitOffer(){document.getElementById('offerForm').classList.add('hidden');document.getElementById('offerDone').classList.remove('hidden');}
+  function openPass(){document.getElementById('passForm').classList.remove('hidden');document.getElementById('passDone').classList.add('hidden');document.getElementById('passOverlay').classList.add('show');}
+  function submitPass(){document.getElementById('passForm').classList.add('hidden');document.getElementById('passDone').classList.remove('hidden');}
+  function closeModals(){document.querySelectorAll('.overlay').forEach(function(o){o.classList.remove('show');});}
+
+  // countdown
+  var total = 47*3600 + 59*60 + 12;
+  function tick(){
+    total--; if(total<0) total=0;
+    var h=Math.floor(total/3600), m=Math.floor((total%3600)/60), s=total%60;
+    var str=(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    var a=document.getElementById('count1'), b=document.getElementById('count2');
+    if(a)a.textContent=str; if(b)b.textContent=str;
+  }
+  setInterval(tick,1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Offers · Investor Deal Builder (Agent)</title>
+<style>
+  :root{
+    --blue:#1153c4; --blue-dark:#0d3f97; --blue-050:#eef4ff; --blue-100:#dbe7ff;
+    --ink:#141c2b; --muted:#5b6678; --line:#e4e9f2; --bg:#f5f8fd; --white:#fff;
+    --green:#0f8a5f; --green-050:#e7f6ef; --amber:#b7791f; --amber-050:#fdf6e7;
+    --radius:14px; --shadow:0 1px 2px rgba(20,28,43,.06),0 8px 24px rgba(20,28,43,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.45}
+  a{color:inherit}
+
+  /* Header */
+  header{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .bar{max-width:960px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+  .logo .mark{width:26px;height:26px;border-radius:7px;background:var(--blue);display:grid;place-items:center}
+  .logo .mark svg{width:15px;height:15px;fill:#fff}
+  .logo .c{color:var(--blue)} .logo .o{color:var(--ink)}
+  .badge{margin-left:auto;font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-050);
+    border:1px solid var(--blue-100);padding:5px 11px;border-radius:999px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:26px 22px 120px}
+  .lede h1{font-size:24px;margin:6px 0 4px;letter-spacing:-.02em}
+  .lede p{color:var(--muted);margin:0 0 20px;font-size:15px}
+
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 22px;margin-bottom:18px}
+  .card h2{font-size:15px;margin:0 0 3px;display:flex;align-items:center;gap:8px}
+  .card .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .step{width:22px;height:22px;border-radius:6px;background:var(--blue-050);color:var(--blue);
+    font-size:12px;font-weight:800;display:inline-grid;place-items:center}
+  .auto-tag{font-size:11px;font-weight:600;color:var(--green);background:var(--green-050);
+    border:1px solid #cdeede;padding:3px 8px;border-radius:999px;margin-left:6px}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid.three{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:640px){.grid,.grid.three{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12px;font-weight:600;color:var(--muted)}
+  input,select,textarea{font:inherit;font-size:14px;color:var(--ink);background:var(--white);
+    border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:100%}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-050)}
+  textarea{resize:vertical;min-height:70px}
+  input[readonly]{background:#f8fafd;color:var(--ink)}
+
+  .addr-row{display:flex;gap:10px;align-items:flex-end}
+  .addr-row .field{flex:1}
+  .btn{font:inherit;font-weight:700;font-size:14px;border:none;border-radius:10px;padding:11px 18px;
+    cursor:pointer;transition:.15s;white-space:nowrap}
+  .btn.primary{background:var(--blue);color:#fff}
+  .btn.primary:hover{background:var(--blue-dark)}
+  .btn.ghost{background:var(--white);color:var(--blue);border:1px solid var(--blue-100)}
+  .btn.ghost:hover{background:var(--blue-050)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+
+  .hidden{display:none !important}
+  .muted-note{color:var(--muted);font-size:13px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chk{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;font-size:13px;cursor:pointer;user-select:none;background:var(--white)}
+  .chk input{width:auto}
+  .chk.on{border-color:var(--blue);background:var(--blue-050);color:var(--blue-dark);font-weight:600}
+
+  .drop{border:1.5px dashed var(--blue-100);border-radius:12px;background:var(--blue-050);
+    padding:18px;text-align:center;color:var(--blue);font-size:13px;font-weight:600;cursor:pointer}
+  .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .thumb{width:74px;height:56px;border-radius:8px;background:linear-gradient(135deg,#c9d8f5,#9fb8ea);
+    display:grid;place-items:center;color:#3a5c9a;font-size:11px;font-weight:700;border:1px solid var(--blue-100)}
+
+  /* sticky action */
+  .actionbar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:15}
+  .actionbar .inner{max-width:960px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
+  .actionbar .meta{font-size:13px;color:var(--muted)}
+  .actionbar .btn{margin-left:auto}
+
+  .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;
+    border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Loading view */
+  .loadwrap{text-align:center;padding:90px 20px 60px}
+  .spinner-lg{width:46px;height:46px;border:4px solid var(--blue-100);border-top-color:var(--blue);
+    border-radius:50%;display:inline-block;animation:spin .8s linear infinite}
+  .loadwrap h2{font-size:20px;margin:24px 0 6px;letter-spacing:-.02em}
+  .loadwrap p{color:var(--muted);font-size:14px;margin:0;transition:opacity .2s}
+
+  /* Success view */
+  #successView{text-align:center}
+  .success-hero{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:56px 26px;
+    box-shadow:var(--shadow);max-width:560px;margin:34px auto}
+  .success-hero .check{width:64px;height:64px;border-radius:50%;background:var(--green-050);color:var(--green);
+    display:grid;place-items:center;font-size:32px;font-weight:800;margin:0 auto 18px;border:1px solid #cdeede}
+  .success-hero h2{font-size:22px;margin:0 0 8px;letter-spacing:-.02em}
+  .success-hero p{color:var(--muted);font-size:15px;margin:0 auto;max-width:430px}
+
+  /* Match view */
+  #matchView{text-align:center}
+  .match-hero{background:linear-gradient(160deg,var(--blue),#2f6fe0);color:#fff;border-radius:20px;
+    padding:38px 26px;box-shadow:var(--shadow)}
+  .match-hero .count{font-size:72px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .match-hero .cap{font-size:16px;opacity:.92;margin-top:4px}
+  .btypes{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 6px}
+  .btype{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 20px;min-width:130px}
+  .btype .n{font-size:26px;font-weight:800;color:var(--blue)}
+  .btype .l{font-size:13px;color:var(--muted);font-weight:600;margin-top:2px}
+  .insight{background:var(--amber-050);border:1px solid #f2e3bf;color:#7a5b12;border-radius:12px;
+    padding:14px 16px;font-size:14px;margin:18px auto 0;max-width:560px;text-align:left}
+  .handoff{background:var(--blue-050);border:1px solid var(--blue-100);border-radius:12px;
+    padding:16px;font-size:14px;color:var(--blue-dark);margin:16px auto 0;max-width:560px;text-align:left}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:13px 20px;border-radius:12px;font-size:14px;font-weight:600;
+    opacity:0;transition:.3s;z-index:40;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg></span>
+      <span><span class="c">Clever</span> <span class="o">Offers</span></span>
+    </div>
+    <span class="badge">Agent workspace · Investor Deal Builder</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ BUILDER ============ -->
+  <div id="builderView">
+    <div class="lede">
+      <h1>Build the investor deal package</h1>
+      <p>Enter the address to auto-fill the basics, add condition &amp; the seller's terms, then match it to Clever's vetted investor network.</p>
+    </div>
+
+    <!-- Agent identity -->
+    <div class="card">
+      <h2>Agent</h2>
+      <p class="sub">So Clever knows whose deal this is and who to pay on close.</p>
+      <div class="grid">
+        <div class="field"><label>Agent name</label><input id="agentName" placeholder="e.g. Dana Ruiz" value="Dana Ruiz"></div>
+        <div class="field"><label>Partner Agent ID</label><input id="agentId" placeholder="e.g. CL-48213" value="CL-48213"></div>
+      </div>
+    </div>
+
+    <!-- Address + autofill -->
+    <div class="card">
+      <h2><span class="step">1</span> Property address</h2>
+      <p class="sub">We pull specs, taxes, and valuation automatically — you only add what needs judgment.</p>
+      <div class="addr-row">
+        <div class="field">
+          <label>Street address</label>
+          <input id="addr" placeholder="e.g. 1428 Maple Ave, Springfield, MO 65807" value="1428 Maple Ave, Springfield, MO 65807">
+        </div>
+        <button class="btn primary" id="autofillBtn" onclick="autofill()">⚡ Auto-fill details &amp; valuation</button>
+      </div>
+      <p class="muted-note" style="margin-top:10px">↓ Populates <b>Property details</b> and <b>Valuation</b> (sections 2 &amp; 3) automatically — you won't type them.</p>
+    </div>
+
+    <!-- Auto-filled sections (empty on load, populated by Auto-fill) -->
+    <div id="autoSections">
+      <div class="card">
+        <h2><span class="step">2</span> Property details <span class="auto-tag">auto-filled · public records</span></h2>
+        <p class="sub">Editable if anything looks off.</p>
+        <div class="grid three">
+          <div class="field"><label>Property type</label><input id="ptype" readonly></div>
+          <div class="field"><label>Beds</label><input id="beds" readonly></div>
+          <div class="field"><label>Baths</label><input id="baths" readonly></div>
+          <div class="field"><label>Sq ft</label><input id="sqft" readonly></div>
+          <div class="field"><label>Lot size</label><input id="lot" readonly></div>
+          <div class="field"><label>Year built</label><input id="year" readonly></div>
+          <div class="field"><label>HOA</label><input id="hoa" readonly></div>
+          <div class="field"><label>Annual taxes</label><input id="tax" readonly></div>
+          <div class="field"><label>Zoning</label><input id="zoning" readonly></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step">3</span> Valuation <span class="auto-tag">auto-filled · valuation data</span></h2>
+        <p class="sub">The underwriting numbers investors bid against.</p>
+        <div class="grid three">
+          <div class="field"><label>As-is value (AVM)</label><input id="avm" readonly></div>
+          <div class="field"><label>After-repair value (ARV)</label><input id="arv" readonly></div>
+          <div class="field"><label>Est. monthly rent</label><input id="rent" readonly></div>
+        </div>
+        <p class="muted-note" style="margin-top:10px">Comps: 6 as-is &amp; 4 renovated within 0.8 mi &middot; <a href="#" onclick="return false" style="color:var(--blue);font-weight:600">view comps</a></p>
+      </div>
+    </div>
+
+    <!-- Agent-entered: condition -->
+    <div class="card">
+      <h2><span class="step">4</span> Condition &amp; rehab <span class="muted-note" style="font-weight:400">· you add this</span></h2>
+      <p class="sub">Honest condition — investors want the real state, not a listing photo.</p>
+      <div class="grid">
+        <div class="field"><label>Overall condition</label>
+          <select id="cond"><option>Turnkey / move-in ready</option><option selected>Dated, cosmetic work</option><option>Needs moderate rehab</option><option>Heavy rehab / distressed</option></select></div>
+        <div class="field"><label>Occupancy</label>
+          <select id="occ"><option selected>Vacant</option><option>Owner-occupied</option><option>Tenant-occupied</option></select></div>
+        <div class="field"><label>Roof age (yrs)</label><input id="roof" placeholder="e.g. 14"></div>
+        <div class="field"><label>Rough rehab estimate</label><input id="rehab" placeholder="e.g. $45,000"></div>
+      </div>
+      <div class="field" style="margin-top:14px"><label>Known issues / notes</label>
+        <textarea id="issues" placeholder="Foundation, systems, water damage, anything an investor should know…"></textarea></div>
+    </div>
+
+    <!-- Photos -->
+    <div class="card">
+      <h2><span class="step">5</span> Photos &amp; walkthrough</h2>
+      <p class="sub">Add real, honest photos — including the ugly.</p>
+      <div class="drop" onclick="addPhoto()">＋ Click to add photos / video walkthrough</div>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+
+    <!-- Seller terms -->
+    <div class="card">
+      <h2><span class="step">6</span> Seller situation &amp; terms</h2>
+      <p class="sub">What the seller is open to decides <b>which buyer types</b> we can match — more flexibility, more competition.</p>
+      <div class="grid">
+        <div class="field"><label>Desired timeline</label>
+          <select id="timeline"><option>ASAP (7–14 days)</option><option selected>Fast (2–4 weeks)</option><option>Flexible (1–2 months)</option></select></div>
+        <div class="field"><label>Seller price expectation</label><input id="expect" placeholder="e.g. $215,000"></div>
+      </div>
+      <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin:16px 0 8px">Open to (check all that apply)</label>
+      <div class="chips" id="terms">
+        <label class="chk on"><input type="checkbox" value="cash" checked onchange="tglChip(this)"> Cash offer</label>
+        <label class="chk"><input type="checkbox" value="novation" onchange="tglChip(this)"> Novation</label>
+        <label class="chk"><input type="checkbox" value="sellerfin" onchange="tglChip(this)"> Seller-finance</label>
+        <label class="chk"><input type="checkbox" value="leaseback" onchange="tglChip(this)"> Leaseback / stay after close</label>
+        <label class="chk"><input type="checkbox" value="tenant" onchange="tglChip(this)"> Tenant stays</label>
+      </div>
+    </div>
+
+    <!-- Access -->
+    <div class="card">
+      <h2><span class="step">7</span> Access</h2>
+      <div class="grid">
+        <div class="field"><label>Showing access</label>
+          <select id="access"><option>Lockbox — self-show</option><option selected>By appointment</option><option>Drive-by only (hard to show)</option></select></div>
+        <div class="field"><label>Disclosures / docs</label><input id="docs" placeholder="Title, existing inspection, survey…"></div>
+      </div>
+    </div>
+  </div><!-- /builderView -->
+
+  <!-- ============ LOADING ============ -->
+  <div id="loadingView" class="hidden">
+    <div class="loadwrap">
+      <span class="spinner-lg"></span>
+      <h2>Matching to Clever's investor network…</h2>
+      <p id="loadMsg">Reading investor buy boxes…</p>
+    </div>
+  </div>
+
+  <!-- ============ SUCCESS ============ -->
+  <div id="successView" class="hidden">
+    <div class="success-hero">
+      <div class="check">✓</div>
+      <h2>Package sent to Clever's investor network</h2>
+      <p>We're shopping this deal to the matched investors now. Competing offers will come back to you here — you never chase buyers.</p>
+      <button class="btn primary" onclick="restart()" style="margin-top:24px">＋ Build another package</button>
+      <p class="muted-note" style="margin-top:20px">Made a mistake or need to change this package?
+        <a href="#" onclick="return false" style="color:var(--blue);font-weight:600;cursor:pointer">Email the Clever network team →</a><br>
+        <span style="font-size:12px">We'll hold it before it's shopped, or send investors a correction if it's already out.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ MATCH RESULT ============ -->
+  <div id="matchView" class="hidden">
+    <div class="match-hero">
+      <div class="count" id="countNum">0</div>
+      <div class="cap">vetted investors matched · across <b id="typeCount">0</b> buyer types</div>
+    </div>
+
+    <div class="btypes" id="btypes"></div>
+
+    <div class="insight" id="insight"></div>
+
+    <div class="handoff">
+      <b>You're almost done.</b> Now send this package to Clever below and we'll shop it to these investors under our name — then bring the competing offers back to you. You never chase buyers.
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:12px;justify-content:center">
+      <button class="btn ghost" onclick="backToBuilder()">← Edit package</button>
+      <button class="btn primary" onclick="sendNetwork()">Send to Clever network</button>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- sticky action bar (builder only) -->
+<div class="actionbar" id="actionbar">
+  <div class="inner">
+    <span class="meta" id="progressMeta">Enter an address to begin</span>
+    <button class="btn primary" id="matchBtn" onclick="runMatch()" disabled>Run investor match →</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Package sent to Clever's investor network</div>
+
+<script>
+  var filled = false;
+
+  var SAMPLE = {
+    ptype:"Single-family", beds:"3", baths:"2", sqft:"1,420", lot:"0.19 ac",
+    year:"1978", hoa:"None", tax:"$2,240 / yr", zoning:"R-1 Residential",
+    avm:"$208,000", arv:"$285,000", rent:"$1,750 / mo"
+  };
+
+  function autofill(){
+    var btn = document.getElementById('autofillBtn');
+    if(!document.getElementById('addr').value.trim()) return;
+    btn.innerHTML = '<span class="spinner"></span>Pulling data…';
+    btn.disabled = true;
+    setTimeout(function(){
+      for(var k in SAMPLE){ var el=document.getElementById(k); if(el) el.value = SAMPLE[k]; }
+      document.getElementById('autoSections').classList.remove('hidden');
+      document.getElementById('expect').value = "$215,000";
+      btn.innerHTML = '✓ Auto-filled';
+      filled = true;
+      updateProgress();
+    }, 900);
+  }
+
+  function addPhoto(){
+    var t = document.getElementById('thumbs');
+    var labels = ['Front','Kitchen','Bath','Roof','Damage','Interior'];
+    var i = t.children.length;
+    if(i>=6) return;
+    var d = document.createElement('div');
+    d.className='thumb'; d.textContent = labels[i] || 'Photo';
+    t.appendChild(d);
+  }
+
+  function tglChip(cb){
+    cb.parentElement.classList.toggle('on', cb.checked);
+    updateProgress();
+  }
+
+  function updateProgress(){
+    var meta = document.getElementById('progressMeta');
+    var btn = document.getElementById('matchBtn');
+    if(!filled){ meta.textContent = 'Enter an address to begin'; btn.disabled = true; return; }
+    btn.disabled = false;
+    var n = document.querySelectorAll('#terms input:checked').length;
+    meta.textContent = 'Package ready · ' + n + ' seller term' + (n===1?'':'s') + ' selected';
+  }
+
+  function computeMatch(){
+    // base buyer types always present for a standard SFH in a dense segment
+    var types = [
+      {l:'Fix & Flip', n:9},
+      {l:'Buy & Hold', n:6}
+    ];
+    var terms = Array.prototype.map.call(document.querySelectorAll('#terms input:checked'), function(c){return c.value;});
+    if(terms.indexOf('novation')>-1) types.push({l:'Novation', n:3});
+    if(terms.indexOf('sellerfin')>-1) types.push({l:'Seller-Finance', n:4});
+    if(terms.indexOf('leaseback')>-1) types.push({l:'Leaseback Buyer', n:2});
+    var total = types.reduce(function(s,t){return s+t.n;},0);
+    return {types:types, total:total};
+  }
+
+  function runMatch(){
+    // show loading state first
+    document.getElementById('builderView').classList.add('hidden');
+    document.getElementById('actionbar').classList.add('hidden');
+    document.getElementById('matchView').classList.add('hidden');
+    document.getElementById('loadingView').classList.remove('hidden');
+    window.scrollTo(0,0);
+
+    var msgs = ['Reading investor buy boxes…','Filtering by geography, price &amp; year built…','Scoring condition &amp; seller terms…','Ranking by buyer-type fit…'];
+    var i=0, msgEl=document.getElementById('loadMsg');
+    var cyc=setInterval(function(){
+      i++; if(i<msgs.length){ msgEl.style.opacity=0;
+        setTimeout(function(){ msgEl.innerHTML=msgs[i]; msgEl.style.opacity=1; },180); }
+    },420);
+
+    setTimeout(function(){
+      clearInterval(cyc);
+      document.getElementById('loadingView').classList.add('hidden');
+      renderMatch();
+    }, 1900);
+  }
+
+  function renderMatch(){
+    var m = computeMatch();
+    document.getElementById('matchView').classList.remove('hidden');
+    window.scrollTo(0,0);
+
+    document.getElementById('typeCount').textContent = m.types.length;
+    var bt = document.getElementById('btypes'); bt.innerHTML='';
+    m.types.forEach(function(t){
+      var d=document.createElement('div'); d.className='btype';
+      d.innerHTML='<div class="n">'+t.n+'</div><div class="l">'+t.l+'</div>';
+      bt.appendChild(d);
+    });
+
+    var extra = m.types.length>2
+      ? "Because the seller is flexible on terms, this deal reaches "+m.types.length+" different buyer types — each bids on different economics, which is what creates real price tension and pushes offers up."
+      : "This deal reaches the two core buyer types. Adding seller-term flexibility (novation, seller-finance) would open more buyer types and more competition.";
+    document.getElementById('insight').innerHTML = "<b>Why this matters:</b> " + extra;
+
+    // count-up
+    var el=document.getElementById('countNum'), cur=0, target=m.total;
+    var step=Math.max(1,Math.round(target/28));
+    var iv=setInterval(function(){cur+=step; if(cur>=target){cur=target;clearInterval(iv);} el.textContent=cur;},22);
+  }
+
+  function backToBuilder(){
+    document.getElementById('matchView').classList.add('hidden');
+    document.getElementById('builderView').classList.remove('hidden');
+    document.getElementById('actionbar').classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+
+  function sendNetwork(){
+    document.getElementById('matchView').classList.add('hidden');
+    document.getElementById('successView').classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+
+  function restart(){ location.reload(); }
+
+  // show a hint in the empty auto-fill fields on load
+  Array.prototype.forEach.call(document.querySelectorAll('#autoSections input'), function(i){
+    i.placeholder = 'Auto-fill above ↑';
+  });
+</script>
+</body>
+</html>
