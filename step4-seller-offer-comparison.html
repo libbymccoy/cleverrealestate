@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Offers · Your Offers (Seller)</title>
+<style>
+  :root{
+    --blue:#1153c4;--blue-dark:#0d3f97;--blue-050:#eef4ff;--blue-100:#dbe7ff;
+    --ink:#141c2b;--muted:#5b6678;--line:#e4e9f2;--bg:#f5f8fd;--white:#fff;
+    --green:#0f8a5f;--green-050:#e7f6ef;--amber:#b7791f;--amber-050:#fdf6e7;
+    --violet:#6b46c1;--violet-050:#f1ecfb;--slate:#475569;--slate-050:#f1f5f9;
+    --radius:14px;--shadow:0 1px 2px rgba(20,28,43,.06),0 8px 24px rgba(20,28,43,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.4}
+  header{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .bar{max-width:1000px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+  .logo .m{width:26px;height:26px;border-radius:7px;background:var(--blue);display:grid;place-items:center}
+  .logo .m svg{width:15px;height:15px;fill:#fff}
+  .logo .c{color:var(--blue)}
+  .who{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.3}
+  .who b{color:var(--ink);font-size:13px}
+
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 22px 110px}
+  .lede h1{font-size:24px;margin:4px 0 4px;letter-spacing:-.02em}
+  .lede p{color:var(--muted);margin:0;font-size:15px}
+
+  .banner{display:none;align-items:center;gap:10px;background:var(--green-050);border:1px solid #cdeede;
+    color:#0b5c43;border-radius:11px;padding:12px 15px;font-size:14px;margin:16px 0 0;font-weight:600}
+  .banner.show{display:flex}
+  .banner .x{margin-left:auto;cursor:pointer;color:#0b5c43;opacity:.6;border:none;background:none;font-size:16px}
+
+  .steps{display:flex;gap:10px;margin:18px 0 10px;flex-wrap:wrap}
+  .step{flex:1;min-width:210px;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;gap:11px;align-items:flex-start;box-shadow:var(--shadow)}
+  .step .n{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;flex-shrink:0}
+  .step .t{font-size:13px;color:var(--muted)}
+  .step .t b{display:block;font-size:14px;margin-bottom:1px;color:var(--ink)}
+  .arrow{align-self:center;color:#9aa7bd;font-size:22px;font-weight:700;flex:0 0 auto}
+  @media(max-width:640px){.arrow{display:none}}
+  .transp{background:var(--green-050);border:1px solid #cdeede;border-radius:11px;padding:11px 15px;font-size:13px;color:#0b5c43;margin:16px 0 12px}
+  .transp b{color:var(--green)}
+  .divider{border:none;border-top:1px solid var(--line);margin:20px 0 18px}
+
+  .chips{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .chip{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);flex:1;min-width:150px}
+  .chip .l{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+  .chip .v{font-size:20px;font-weight:800;margin-top:2px}
+  .chip .v.green{color:var(--green)} .chip .v.blue{color:var(--blue)}
+
+  .sortbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .sortbar .lbl{font-size:13px;color:var(--muted);font-weight:600;margin-right:2px}
+  .sortbtn{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--white);
+    color:var(--slate);border-radius:999px;padding:7px 14px;cursor:pointer}
+  .sortbtn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+  .tablewrap{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  table{border-collapse:collapse;width:100%;table-layout:fixed}
+  col.c-offer{width:26%} col.c-net{width:21%} col.c-close{width:15%} col.c-cert{width:15%} col.c-like{width:16%} col.c-check{width:7%}
+  thead th:last-child, tbody td:last-child{text-align:center}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);text-align:left;
+    padding:12px 12px;border-bottom:1px solid var(--line);font-weight:700}
+  tbody td{padding:13px 12px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{cursor:pointer}
+  tbody tr.sel{background:var(--blue-050)}
+  tr.projected td{background:repeating-linear-gradient(45deg,#fafbfe,#fafbfe 10px,#f4f7fc 10px,#f4f7fc 20px)}
+  tr.projected.sel td{background:var(--blue-050)}
+  .cbx{width:18px;height:18px;accent-color:var(--blue);cursor:pointer;margin-top:2px}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .b-listing{background:var(--slate-050);color:var(--slate);border:1px solid #e2e8f0}
+  .b-proptech{background:var(--blue-050);color:var(--blue-dark);border:1px solid var(--blue-100)}
+  .b-investor{background:var(--violet-050);color:var(--violet);border:1px solid #e4d8f7}
+  .who2{font-weight:700;margin-top:5px}
+  .sub{font-size:12px;color:var(--muted);margin-top:3px}
+  .netline{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .net{font-size:18px;font-weight:800}
+  .bestpill{font-size:10px;font-weight:800;color:#fff;background:var(--green);padding:2px 7px;border-radius:999px}
+  .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .p-high{background:var(--green-050);color:var(--green)}
+  .p-med{background:var(--amber-050);color:var(--amber)}
+  .conv{display:flex;flex-direction:column;gap:3px;font-size:12.5px}
+  .conv .y{color:var(--green)} .conv .n{color:#b04b3c}
+
+  .foot{color:var(--muted);font-size:12.5px;margin-top:16px}
+
+  /* bulk action bar */
+  .bulk{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);z-index:15;transform:translateY(100%);transition:.2s}
+  .bulk.show{transform:translateY(0)}
+  .bulk .inner{max-width:1000px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
+  .bulk .cnt{font-size:14px;font-weight:700}
+  .bulk .cnt span{color:var(--blue)}
+  .btn{font:inherit;font-weight:700;font-size:14px;border:none;border-radius:10px;padding:11px 18px;cursor:pointer;transition:.15s}
+  .btn.primary{background:var(--blue);color:#fff}.btn.primary:hover{background:var(--blue-dark)}
+  .btn.ghost{background:var(--white);color:var(--muted);border:1px solid var(--line)}
+  .bulk .btn.primary{margin-left:auto}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">
+      <span class="m"><svg viewBox="0 0 24 24"><path d="M12 3 2 11h3v9h6v-6h2v6h6v-9h3z"/></svg></span>
+      <span><span class="c">Clever</span> Offers</span>
+    </div>
+    <div class="who">Seller dashboard<br><b>Jordan Ellis</b> · 1428 Maple Ave</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="banner" id="banner">
+    <span>✓</span><span id="bannerText">You sent offers to your agent.</span>
+    <button class="x" onclick="document.getElementById('banner').classList.remove('show')">✕</button>
+  </div>
+
+  <div class="lede">
+    <h1>Your offers for 1428 Maple Ave</h1>
+    <p>Springfield, MO 65807 · 3 bd / 2 ba · asking $215,000</p>
+  </div>
+
+  <div class="transp"><b>Everything's on the table</b> — including a projected traditional listing, so you see the full picture, not just the fast options. No pressure, no spam.</div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><span class="t"><b>Compare</b>Sort by what matters most to you.</span></div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">2</span><span class="t"><b>Pick</b>Check the box on any offers you like.</span></div>
+    <span class="arrow">→</span>
+    <div class="step"><span class="n">3</span><span class="t"><b>Send</b>We'll pass your picks to your agent.</span></div>
+  </div>
+  <hr class="divider">
+
+  <div class="chips">
+    <div class="chip"><div class="l">Offers received</div><div class="v">6</div></div>
+    <div class="chip"><div class="l">Highest net to you</div><div class="v green">$211,000</div></div>
+    <div class="chip"><div class="l">Fastest close</div><div class="v blue">10 days</div></div>
+  </div>
+
+  <div class="sortbar">
+    <span class="lbl">Sort by:</span>
+    <button class="sortbtn on" data-sort="net" onclick="setSort('net')">Most money to me</button>
+    <button class="sortbtn" data-sort="days" onclick="setSort('days')">Fastest close</button>
+    <button class="sortbtn" data-sort="cert" onclick="setSort('cert')">Most certain</button>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <colgroup>
+        <col class="c-offer"><col class="c-net"><col class="c-close"><col class="c-cert"><col class="c-like"><col class="c-check">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Offer</th>
+          <th>Net to you</th>
+          <th>Time to close</th>
+          <th>Certainty</th>
+          <th>What it's like</th>
+          <th>Pick</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <p class="foot">"Net to you" is what you'd walk away with after fees and costs — not the sticker offer. The traditional listing is a <b>projection</b> (no firm offer yet); the rest are real offers with proof of funds on file. Investor offers came from shopping your home to Clever's vetted investor network.</p>
+</div>
+
+<!-- bulk send bar -->
+<div class="bulk" id="bulk">
+  <div class="inner">
+    <span class="cnt"><span id="selCount">0</span> offer(s) selected</span>
+    <button class="btn ghost" onclick="clearSel()">Clear</button>
+    <button class="btn primary" onclick="send()">Send to my agent →</button>
+  </div>
+</div>
+
+<script>
+  var OFFERS = [
+    { id:'l1', type:'listing', badge:'b-listing', label:'Traditional listing', who:'Projected — top local agent', net:202000, days:75, daysLabel:'~75 days', flex:'Limited flexibility', cert:1, certLabel:'Medium', fees:'~6.5% commission + closing', repairs:false, showings:false, strings:false, projected:true },
+    { id:'p1', type:'proptech', badge:'b-proptech', label:'Proptech cash', who:'InstantCash Co.', net:191000, days:14, daysLabel:'14 days', flex:'Pick your date', cert:2, certLabel:'High', fees:'5% service fee', repairs:true, showings:true, strings:true },
+    { id:'p2', type:'proptech', badge:'b-proptech', label:'Proptech cash', who:'QuickBuy Homes', net:188000, days:10, daysLabel:'10 days', flex:'Pick your date', cert:2, certLabel:'High', fees:'7% service fee', repairs:true, showings:true, strings:true },
+    { id:'i1', type:'investor', badge:'b-investor', label:'Investor · fix & flip', who:'Redbrick Capital', net:196000, days:14, daysLabel:'14 days', flex:'Pick your date', cert:2, certLabel:'High', fees:'No fees', repairs:true, showings:true, strings:true },
+    { id:'i2', type:'investor', badge:'b-investor', label:'Investor · buy & hold', who:'Acme Home Capital', net:205000, days:21, daysLabel:'21 days', flex:'Rent-back OK', cert:2, certLabel:'High', fees:'No fees', repairs:true, showings:true, strings:true },
+    { id:'i3', type:'investor', badge:'b-investor', label:'Investor · novation', who:'Northstar Novation', net:211000, days:45, daysLabel:'~45 days', flex:'Pick your date', cert:1, certLabel:'Medium', fees:'No fees (paid from resale)', repairs:true, showings:true, strings:true }
+  ];
+  var sortKey='net', selected={};
+  var bestNet=Math.max.apply(null,OFFERS.map(function(o){return o.net;}));
+  function money(n){return '$'+n.toLocaleString();}
+
+  function conv(o){
+    var repairs = o.repairs ? '<span class="y">✓ Sell as-is</span>' : '<span class="n">✗ Repairs &amp; prep</span>';
+    var showings = o.showings ? '<span class="y">✓ No showings</span>' : '<span class="n">✗ Showings</span>';
+    var strings = o.strings ? '<span class="y">✓ No contingencies</span>' : '<span class="n">✗ Contingencies</span>';
+    return '<div class="conv">'+repairs+showings+strings+'</div>';
+  }
+  function render(){
+    var arr=OFFERS.slice();
+    if(sortKey==='net') arr.sort(function(a,b){return b.net-a.net;});
+    if(sortKey==='days') arr.sort(function(a,b){return a.days-b.days;});
+    if(sortKey==='cert') arr.sort(function(a,b){return b.cert-a.cert || b.net-a.net;});
+    var html='';
+    arr.forEach(function(o){
+      var isSel=!!selected[o.id];
+      var bp = o.net===bestNet ? ' <span class="bestpill">Best</span>' : '';
+      html+='<tr class="'+(o.projected?'projected ':'')+(isSel?'sel':'')+'" onclick="toggle(\''+o.id+'\')">'+
+        '<td><span class="badge '+o.badge+'">'+o.label+'</span><div class="who2">'+o.who+'</div></td>'+
+        '<td><div class="netline"><span class="net">'+money(o.net)+'</span>'+bp+'</div><div class="sub">'+o.fees+'</div></td>'+
+        '<td>'+o.daysLabel+'<div class="sub">'+o.flex+'</div></td>'+
+        '<td><span class="pill '+(o.cert===2?'p-high':'p-med')+'">'+o.certLabel+'</span></td>'+
+        '<td>'+conv(o)+'</td>'+
+        '<td><input type="checkbox" class="cbx" '+(isSel?'checked':'')+' onclick="event.stopPropagation();toggle(\''+o.id+'\')"></td>'+
+      '</tr>';
+    });
+    document.getElementById('rows').innerHTML=html;
+    updateBulk();
+  }
+  function toggle(id){
+    if(selected[id]) delete selected[id]; else selected[id]=true;
+    render();
+  }
+  function updateBulk(){
+    var n=Object.keys(selected).length;
+    document.getElementById('selCount').textContent=n;
+    document.getElementById('bulk').classList.toggle('show', n>0);
+  }
+  function clearSel(){ selected={}; render(); }
+  function setSort(k){
+    sortKey=k;
+    document.querySelectorAll('.sortbtn').forEach(function(b){b.classList.toggle('on',b.dataset.sort===k);});
+    render();
+  }
+  function send(){
+    var n=Object.keys(selected).length; if(!n) return;
+    var t=new Date();
+    var time=t.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+    document.getElementById('bannerText').textContent='You sent '+n+' offer'+(n>1?'s':'')+' to your agent · today at '+time+'. They\'ll reach out to move forward.';
+    document.getElementById('banner').classList.add('show');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  render();
+</script>
+</body>
+</html>
